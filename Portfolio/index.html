@@ -3,15 +3,20 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="Ratnesh Raj Dwivedi - Cybersecurity Professional, Digital Forensics Researcher, and Security Specialist focused on Penetration Testing & Cyber Threat Intelligence">
-    <meta name="keywords" content="cybersecurity, penetration testing, digital forensics, security researcher, hacking, bug bounty">
+    <meta name="keywords" content="cybersecurity, penetration testing, digital forensics, security researcher, hacking, bug bounty, ethical hacker">
     <meta name="author" content="Ratnesh Raj Dwivedi">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; img-src 'self' data: https:; font-src 'self'">
+    <meta name="theme-color" content="#0d0d0d">
+    <meta name="color-scheme" content="dark light">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; img-src 'self' data: https:; font-src 'self' data:">
     <title>Ratnesh Raj Dwivedi - Cybersecurity & Digital Forensics Specialist</title>
+    <link rel="preload" href="style.css" as="style">
+    <link rel="preload" href="script.js" as="script">
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' fill='%2300ff88'>⚔️</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%230d0d0d' width='180' height='180'/><text y='135' font-size='120' fill='%2300ff88' text-anchor='middle' x='90'>⚔️</text></svg>">
     <script type="application/ld+json">
         {
           "@context": "https://schema.org",
@@ -21,8 +26,7 @@
           "image": "https://avatars.githubusercontent.com/u/122634054?v=4",
           "sameAs": [
             "https://www.linkedin.com/in/ratnesh-raj-dwivedi",
-            "https://github.com/ratnesh1dwivedi",
-            "https://twitter.com/ratnesh1dwivedi"
+            "https://github.com/ratnesh1dwivedi"
           ],
           "jobTitle": "Cybersecurity Specialist & Digital Forensics Researcher",
           "affiliation": [
@@ -34,138 +38,223 @@
 </head>
 
 <body>
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="skip-to-main">Skip to main content</a>
+
     <!-- Matrix canvas background animation -->
     <canvas id="matrix-canvas" aria-hidden="true"></canvas>
 
-    <header>
-        <h1>RATNESH DWIVEDI</h1>
-        <div class="sub">Cybersecurity Specialist | Digital Forensics Researcher | Penetration Tester</div>
-        
-        <nav class="top-links" role="navigation" aria-label="Main navigation">
-            <a href="mailto:ratneshd202@gmail.com" title="Send an email">📧 Email</a>
-            <a href="https://www.linkedin.com/in/ratnesh-raj-dwivedi" target="_blank" rel="noopener noreferrer" title="Visit LinkedIn profile">💼 LinkedIn</a>
-            <a href="https://www.github.com/ratnesh1dwivedi" target="_blank" rel="noopener noreferrer" title="Visit GitHub profile">🐙 GitHub</a>
-            <button id="terminal-trigger" class="terminal-trigger" aria-haspopup="dialog" aria-expanded="false" title="Terminal preview (hover) / Open terminal (click)">
-                <span class="terminal-badge">▶ TERMINAL</span>
-            </button>
-        </nav>
+    <!-- Loader -->
+    <div class="page-loader" id="page-loader" aria-hidden="true">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <header class="main-header">
+        <div class="header-container">
+            <div class="header-content">
+                <h1 class="site-title">RATNESH DWIVEDI</h1>
+                <div class="site-tagline">Cybersecurity Specialist | Digital Forensics Researcher | Penetration Tester</div>
+            </div>
+            
+            <nav class="top-links" role="navigation" aria-label="Main navigation">
+                <a href="mailto:ratneshd202@gmail.com" class="nav-link" title="Send an email" data-tooltip="Email">📧</a>
+                <a href="https://www.linkedin.com/in/ratnesh-raj-dwivedi" class="nav-link" target="_blank" rel="noopener noreferrer" title="Visit LinkedIn profile" data-tooltip="LinkedIn">💼</a>
+                <a href="https://www.github.com/ratnesh1dwivedi" class="nav-link" target="_blank" rel="noopener noreferrer" title="Visit GitHub profile" data-tooltip="GitHub">🐙</a>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light mode" title="Toggle theme">🌙</button>
+                <button id="terminal-trigger" class="terminal-trigger" aria-haspopup="dialog" aria-expanded="false" title="Terminal preview (hover) / Open terminal (click)">
+                    <span class="terminal-badge">▶ TERMINAL</span>
+                </button>
+            </nav>
+        </div>
     </header>
 
-    <main class="container" role="main">
+    <main class="container" id="main-content" role="main">
+        <!-- Quick Bio Section -->
+        <section class="section bio-section" id="bio">
+            <div class="section-content">
+                <p class="intro-text">Passionate cybersecurity professional with expertise in penetration testing, digital forensics, and threat intelligence. Currently pursuing a Master's degree in Cybersecurity & Forensics at UPES University.</p>
+            </div>
+        </section>
+
         <!-- Education Section -->
         <section class="section" id="education">
-            <h2>🎓 Education</h2>
-            <div class="content-block">
-                <h3>UPES University</h3>
-                <p><strong>Master's in Computer Application</strong><br>
-                    Specialization: CyberSecurity & Forensics<br>
-                    <em>Currently Pursuing</em></p>
-            </div>
-            <div class="content-block">
-                <h3>ITM University</h3>
-                <p><strong>Bachelor's in Computer Application</strong><br>
-                    <em>2022-2025</em></p>
+            <h2 class="section-title">�� Education</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3>UPES University</h3>
+                        <p class="timeline-date">Currently Pursuing</p>
+                        <p><strong>Master's in Computer Application</strong><br>
+                            Specialization: CyberSecurity & Forensics</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h3>ITM University</h3>
+                        <p class="timeline-date">2022-2025</p>
+                        <p><strong>Bachelor's in Computer Application</strong></p>
+                    </div>
+                </div>
             </div>
         </section>
 
         <!-- Certifications Section -->
         <section class="section" id="certifications">
-            <h2>🏆 Certifications & Credentials</h2>
-            <ul>
-                <li><a href="https://verify.eicta.digitalcredentials.in/f77641f1-6235-42c5-800f-978c49e30027" target="_blank" rel="noopener noreferrer">Certified Ethical Hacker (CEH) - IITK</a></li>
-                <li><a href="https://verify.eicta.digitalcredentials.in/e5cdb151-742b-49d1-849b-32a1abb6560e" target="_blank" rel="noopener noreferrer">Computer Hacking Forensic Investigator (CHFI) - IITK</a></li>
-                <li><a href="#" target="_blank" rel="noopener noreferrer">Certified in Cybersecurity (CC) - ISC²</a></li>
-                <li><a href="#" target="_blank" rel="noopener noreferrer">Geo-Data Sharing and Cyber Security - ISRO</a></li>
-                <li><a href="https://www.linkedin.com/learning/certificates/5aaa59fcc92358a88c7b106634908002184c3a939d4fa75060105b13a4542a1a" target="_blank" rel="noopener noreferrer">Career Essentials in Cybersecurity - LinkedIn Learning</a></li>
-            </ul>
+            <h2 class="section-title">🏆 Certifications & Credentials</h2>
+            <div class="cert-grid">
+                <div class="cert-card">
+                    <span class="cert-icon">🎖️</span>
+                    <a href="https://verify.eicta.digitalcredentials.in/f77641f1-6235-42c5-800f-978c49e30027" target="_blank" rel="noopener noreferrer">Certified Ethical Hacker (CEH) - IITK</a>
+                </div>
+                <div class="cert-card">
+                    <span class="cert-icon">🔍</span>
+                    <a href="https://verify.eicta.digitalcredentials.in/e5cdb151-742b-49d1-849b-32a1abb6560e" target="_blank" rel="noopener noreferrer">Computer Hacking Forensic Investigator (CHFI) - IITK</a>
+                </div>
+                <div class="cert-card">
+                    <span class="cert-icon">🛡️</span>
+                    <a href="#">Certified in Cybersecurity (CC) - ISC²</a>
+                </div>
+                <div class="cert-card">
+                    <span class="cert-icon">🌍</span>
+                    <a href="#">Geo-Data Sharing and Cyber Security - ISRO</a>
+                </div>
+                <div class="cert-card">
+                    <span class="cert-icon">📜</span>
+                    <a href="https://www.linkedin.com/learning/certificates/5aaa59fcc92358a88c7b106634908002184c3a939d4fa75060105b13a4542a1a" target="_blank" rel="noopener noreferrer">Career Essentials in Cybersecurity</a>
+                </div>
+            </div>
         </section>
 
         <!-- Technical Skills Section -->
         <section class="section" id="skills">
-            <h2>⚙️ Technical Skills</h2>
-            <ul>
-                <li><strong>Programming Languages:</strong> Python, Bash, C</li>
-                <li><strong>Security Tools:</strong> Wireshark, Metasploit Framework, Nmap, Burp Suite, Splunk, Autopsy, John the Ripper, Hashcat</li>
-                <li><strong>Operating Systems:</strong> Linux, Kali Linux, Tails, Whonix, BlackArch, Windows</li>
-                <li><strong>Core Competencies:</strong> Penetration Testing, Digital Forensics, Vulnerability Assessment, Cyber Threat Intelligence, Social Engineering, Incident Response</li>
-            </ul>
+            <h2 class="section-title">⚙️ Technical Skills</h2>
+            <div class="skills-container">
+                <div class="skill-category">
+                    <h3>💻 Programming Languages</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">Bash</span>
+                        <span class="skill-tag">C</span>
+                        <span class="skill-tag">JavaScript</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>🔧 Security Tools</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Wireshark</span>
+                        <span class="skill-tag">Metasploit</span>
+                        <span class="skill-tag">Nmap</span>
+                        <span class="skill-tag">Burp Suite</span>
+                        <span class="skill-tag">Splunk</span>
+                        <span class="skill-tag">Autopsy</span>
+                        <span class="skill-tag">John</span>
+                        <span class="skill-tag">Hashcat</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>🖥️ Operating Systems</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Linux</span>
+                        <span class="skill-tag">Kali Linux</span>
+                        <span class="skill-tag">Windows</span>
+                        <span class="skill-tag">Tails</span>
+                        <span class="skill-tag">Whonix</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>🎯 Core Competencies</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Penetration Testing</span>
+                        <span class="skill-tag">Digital Forensics</span>
+                        <span class="skill-tag">Vulnerability Assessment</span>
+                        <span class="skill-tag">Threat Intelligence</span>
+                        <span class="skill-tag">Incident Response</span>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- Research & Publications Section -->
         <section class="section" id="research">
-            <h2>📚 Research & Publications</h2>
-            <ul>
-                <li>
-                    <a href="https://easychair.org/conferences2/submission?a=35478774&submission=7438066" target="_blank" rel="noopener noreferrer"><strong>Forensic Analysis of SD Card and Flight Log Artifacts of DJI Phantom 4 Pro V2.0</strong></a>
-                    <p><strong>Published:</strong> Information and Communication Technology for Competitive Strategies (ICTCS) 2025<br>
-                        <strong>Focus:</strong> Forensic assessment of consumer drones, SD card analysis, and NIST CFReDS evidence examination</p>
-                </li>
-            </ul>
+            <h2 class="section-title">📚 Research & Publications</h2>
+            <div class="research-item">
+                <div class="research-header">
+                    <h3><a href="https://easychair.org/conferences2/submission?a=35478774&submission=7438066" target="_blank" rel="noopener noreferrer">Forensic Analysis of SD Card and Flight Log Artifacts of DJI Phantom 4 Pro V2.0</a></h3>
+                    <span class="research-badge">Published</span>
+                </div>
+                <p class="research-meta"><strong>Conference:</strong> Information and Communication Technology for Competitive Strategies (ICTCS) 2025</p>
+                <p><strong>Focus:</strong> Forensic assessment of consumer drones, SD card analysis, and NIST CFReDS evidence examination.</p>
+            </div>
         </section>
 
         <!-- Technical Documentation Section -->
         <section class="section" id="documentation">
-            <h2>📖 Technical Documentation & Insights</h2>
-            <ul>
-                <li>
-                    <a href="https://www.linkedin.com/posts/ratnesh-raj-dwivedi_pegasus-doesnt-ask-it-decides-who-to-watch-activity-7375770447730323456-mYNX?utm_source=share&utm_medium=member_desktop" target="_blank" rel="noopener noreferrer"><strong>Pegasus Spyware: Mobile Security Threats</strong></a>
+            <h2 class="section-title">📖 Technical Documentation & Insights</h2>
+            <div class="doc-grid">
+                <div class="doc-card">
+                    <h3><a href="https://www.linkedin.com/posts/ratnesh-raj-dwivedi_pegasus-doesnt-ask-it-decides-who-to-watch-activity-7375770447730323456-mYNX?utm_source=share&utm_medium=member_desktop" target="_blank" rel="noopener noreferrer">Pegasus Spyware: Mobile Security Threats</a></h3>
                     <p>Analysis of sophisticated mobile surveillance capabilities and counter-measures for personal cybersecurity.</p>
-                </li>
-                <li>
-                    <a href="#" target="_blank" rel="noopener noreferrer"><strong>PRISM & FVEY: Intelligence Sharing & Surveillance</strong></a>
+                </div>
+                <div class="doc-card">
+                    <h3><a href="#">PRISM & FVEY: Intelligence Sharing & Surveillance</a></h3>
                     <p>Deep dive into global surveillance programs and their implications for privacy and cybersecurity.</p>
-                </li>
-            </ul>
+                </div>
+            </div>
         </section>
 
         <!-- Activities & Participation Section -->
         <section class="section" id="activities">
-            <h2>🎯 Activities & Participation</h2>
+            <h2 class="section-title">🎯 Activities & Participation</h2>
             
-            <div class="activity-group">
-                <h3>🎓 Workshops & Seminars</h3>
-                <ul>
-                    <li>Cybercrime Awareness & Cybersecurity - ITM University</li>
-                    <li>Cyber Security Challenges & Emerging Trends - ITM University</li>
-                    <li>JavaScript & React JS - ITM University</li>
-                </ul>
-            </div>
+            <div class="activity-container">
+                <div class="activity-card">
+                    <h3 class="activity-title">🎓 Workshops & Seminars</h3>
+                    <ul class="activity-list">
+                        <li>Cybercrime Awareness & Cybersecurity</li>
+                        <li>Cyber Security Challenges & Emerging Trends</li>
+                        <li>JavaScript & React JS</li>
+                    </ul>
+                </div>
 
-            <div class="activity-group">
-                <h3>🏅 Hackathons & Competitions</h3>
-                <ul>
-                    <li>Anveshanam-24 - IIT Jammu (with O/o Advisor Cyber, DRDO)</li>
-                    <li>Cryptography and Lightweight Protocols For Cyber-Physical Systems - IIIT Bhubaneswar (ISEA)</li>
-                    <li>Demystifying IoT Security - Centre for Cyber Intelligence (DST-CURIE-AI sponsored)</li>
-                    <li>Cybersecurity Job Simulation - Forage & MasterCard</li>
-                </ul>
-            </div>
+                <div class="activity-card">
+                    <h3 class="activity-title">🏅 Hackathons & Competitions</h3>
+                    <ul class="activity-list">
+                        <li>Anveshanam-24 - IIT Jammu (DRDO)</li>
+                        <li>Cryptography & Cyber-Physical Systems - IIIT Bhubaneswar</li>
+                        <li>Demystifying IoT Security - Centre for Cyber Intelligence</li>
+                        <li>Cybersecurity Job Simulation - Forage & MasterCard</li>
+                    </ul>
+                </div>
 
-            <div class="activity-group">
-                <h3>📚 Online Courses</h3>
-                <ul>
-                    <li>Cybersecurity for Everyone - University of Maryland</li>
-                    <li>Cybersecurity Fundamentals - Tech Mahindra</li>
-                    <li>Deep Learning in Ecological Studies - ISRO IIRS</li>
-                    <li>Geodata Processing using Python - ISRO IIRS</li>
-                    <li>Geocomputation and Geo-web Services - ISRO IIRS</li>
-                </ul>
-            </div>
+                <div class="activity-card">
+                    <h3 class="activity-title">📚 Online Courses</h3>
+                    <ul class="activity-list">
+                        <li>Cybersecurity for Everyone - University of Maryland</li>
+                        <li>Cybersecurity Fundamentals - Tech Mahindra</li>
+                        <li>Deep Learning in Ecological Studies - ISRO IIRS</li>
+                        <li>Geodata Processing using Python - ISRO IIRS</li>
+                    </ul>
+                </div>
 
-            <div class="activity-group">
-                <h3>🚩 Capture The Flag (CTF)</h3>
-                <ul>
-                    <li>Pico CTF - Ongoing participation</li>
-                    <li>HackTheBox (HTB) - Regular player</li>
-                    <li>TryHackMe (THM) - Active participant</li>
-                </ul>
+                <div class="activity-card">
+                    <h3 class="activity-title">🚩 Capture The Flag (CTF)</h3>
+                    <ul class="activity-list">
+                        <li>Pico CTF - Ongoing</li>
+                        <li>HackTheBox (HTB) - Regular</li>
+                        <li>TryHackMe (THM) - Active</li>
+                    </ul>
+                </div>
             </div>
         </section>
     </main>
 
     <footer role="contentinfo">
-        <p>&copy; <span id="year"></span> <strong>RATNESH DWIVEDI</strong> | Cybersecurity & Digital Forensics</p>
-        <small>Handcrafted with ❤️ and served with 🔒 security in mind</small>
+        <div class="footer-content">
+            <p>&copy; <span id="year"></span> <strong>RATNESH DWIVEDI</strong> | Cybersecurity & Digital Forensics</p>
+            <p class="footer-tagline">Handcrafted with ❤️ and served with 🔒 security in mind</p>
+        </div>
     </footer>
 
     <!-- Terminal Preview (Hover) -->
@@ -189,6 +278,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-notification" class="toast" role="status" aria-live="polite"></div>
 
     <script src="script.js" defer></script>
 </body>
