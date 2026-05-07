@@ -1,84 +1,39 @@
 // ====================================================
-// CYBERSECURITY PORTFOLIO - ENHANCED INTERACTIVE SCRIPT
-// Matrix animation, terminal simulation, theme toggle, animations
+// CYBERSECURITY PORTFOLIO - INTERACTIVE SCRIPT
+// Matrix animation, terminal simulation, accessibility
 // ====================================================
 
 (() => {
   'use strict';
 
-  // ============ PERFORMANCE: Reduce Repaints ============
-  const raf = window.requestAnimationFrame || ((cb) => setTimeout(cb, 1000 / 60));
-
   // ============ UTILITY FUNCTIONS ============
-  const safeGet = (id) => document.getElementById(id);
-  const show = (el) => { if (el) el.style.display = ''; };
-  const hide = (el) => { if (el) el.style.display = 'none'; };
-
-  // Toast notifications
-  const showToast = (msg, duration = 2000) => {
-    const toast = safeGet('toast-notification');
-    if (!toast) return;
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), duration);
+  const safeGet = (id) => {
+    const el = document.getElementById(id);
+    if (!el) console.warn(`Element #${id} not found`);
+    return el;
   };
-
-  // ============ PAGE LOADER ============
-  const hideLoader = () => {
-    const loader = safeGet('page-loader');
-    if (loader) {
-      loader.classList.add('fade-out');
-      setTimeout(() => hide(loader), 300);
-    }
-  };
-  window.addEventListener('load', hideLoader);
-
-  // ============ DARK MODE TOGGLE ============
-  const themeToggle = safeGet('theme-toggle');
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-  const currentTheme = localStorage.getItem('theme') || (prefersDark.matches ? 'dark' : 'light');
-  
-  const setTheme = (theme) => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-    if (themeToggle) themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
-  };
-
-  setTheme(currentTheme);
-  if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      setTheme(newTheme);
-    });
-  }
-  prefersDark.addEventListener('change', (e) => setTheme(e.matches ? 'dark' : 'light'));
 
   // ============ MATRIX CANVAS ANIMATION ============
   const canvas = safeGet('matrix-canvas');
   if (canvas) {
-    const ctx = canvas.getContext('2d', { alpha: true });
+    const ctx = canvas.getContext('2d');
     let w = canvas.width = window.innerWidth;
     let h = canvas.height = window.innerHeight;
     const chars = 'aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789@#%&()*+-<>/\\[]{}|';
     const fontSize = 14;
     const columns = Math.floor(w / fontSize);
     const drops = Array(columns).fill(0);
-    let animationId;
-    let isAnimating = true;
 
-    // Reduce motion preference
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (prefersReduced.matches) isAnimating = false;
-
+    // Handle window resize
     const handleResize = () => {
       w = canvas.width = window.innerWidth;
       h = canvas.height = window.innerHeight;
     };
     window.addEventListener('resize', handleResize, { passive: true });
 
+    // Draw matrix effect
+    let animationId;
     const drawMatrix = () => {
-      if (!isAnimating) return;
-      
       ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
       ctx.fillRect(0, 0, w, h);
       ctx.fillStyle = '#00ff88';
@@ -88,15 +43,20 @@
         const text = chars.charAt(Math.floor(Math.random() * chars.length));
         const x = i * fontSize;
         const y = drops[i] * fontSize;
+
+        // Occasional gold characters for visual interest
         ctx.fillStyle = (Math.random() > 0.97) ? '#d4af37' : '#00ff88';
         ctx.fillText(text, x, y);
+
+        // Reset drop position randomly
         if (y > h && Math.random() > 0.975) drops[i] = 0;
         drops[i]++;
       }
-      animationId = raf(drawMatrix);
+      animationId = requestAnimationFrame(drawMatrix);
     };
     drawMatrix();
 
+    // Cleanup on page unload
     window.addEventListener('beforeunload', () => {
       cancelAnimationFrame(animationId);
     });
@@ -104,7 +64,9 @@
 
   // ============ YEAR FOOTER UPDATE ============
   const yearSpan = safeGet('year');
-  if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+  if (yearSpan) {
+    yearSpan.textContent = new Date().getFullYear();
+  }
 
   // ============ SMOOTH SCROLL NAVIGATION ============
   document.addEventListener('DOMContentLoaded', () => {
@@ -112,32 +74,17 @@
     anchorLinks.forEach(link => {
       link.addEventListener('click', (e) => {
         const href = link.getAttribute('href');
-        if (href === '#' || href === '') return;
+        if (href === '#') return; // Skip non-anchor links
+
         e.preventDefault();
         const targetId = href.substring(1);
         const target = document.getElementById(targetId);
         if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          target.scrollIntoView({ behavior: 'smooth' });
         }
       });
     });
   });
-
-  // ============ INTERSECTION OBSERVER FOR ANIMATIONS ============
-  const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-  };
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('fade-in');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, observerOptions);
-
-  document.querySelectorAll('.section').forEach(section => observer.observe(section));
 
   // ============ TERMINAL SIMULATION ============
   const terminalPreview = safeGet('terminal-preview');
@@ -150,9 +97,11 @@
   const modalLines = safeGet('modal-lines');
   const terminalBody = safeGet('terminal-body');
 
+  // Guard clause: if essential elements missing, exit
   if (!terminalPreview || !terminalModal || !terminalTrigger) {
     console.warn('Terminal elements not found - skipping initialization');
   } else {
+    // Demo commands for terminal
     const demoCommands = [
       'whoami',
       'nmap -sV --top-ports 100 192.168.1.0/24',
@@ -169,6 +118,7 @@
       'echo "All security checks complete."'
     ];
 
+    // Generate realistic command outputs
     const generateFakeOutput = (cmd) => {
       if (cmd.startsWith('whoami')) return 'ratnesh\nratnesh@cybersec:~$';
       if (cmd.startsWith('nmap')) return 'Starting Nmap 7.92 at 2025-05-07 14:32 UTC\nNmap scan report for 192.168.1.0/24\nPORT    STATE  SERVICE\n22/tcp  open   ssh\n80/tcp  open   http\n443/tcp open   https\nNmap done at 2025-05-07 14:35 UTC';
@@ -186,15 +136,22 @@
       return '[ERROR] Command not recognized. Type \'help\' for options.';
     };
 
+    // Typing animation
     let previewStopper = null;
     let modalStopper = null;
 
     const startTyping = (targetEl, speed = 18, pause = 900) => {
-      if (!targetEl) return () => {};
+      if (!targetEl) return () => {}; // Fallback
+
       let cmdIndex = 0;
       let charIndex = 0;
       let timers = [];
-      const clearTimers = () => { timers.forEach(t => clearTimeout(t)); timers = []; };
+
+      const clearTimers = () => {
+        timers.forEach(t => clearTimeout(t));
+        timers = [];
+      };
+
       const step = () => {
         const current = demoCommands[cmdIndex];
         if (charIndex <= current.length) {
@@ -203,9 +160,12 @@
           charIndex++;
           timers.push(setTimeout(step, speed));
         } else {
+          // Execute command and show output
           timers.push(setTimeout(() => {
             const out = generateFakeOutput(current);
             targetEl.textContent += '\n' + out;
+
+            // Move to next command
             timers.push(setTimeout(() => {
               targetEl.textContent += '\n';
               cmdIndex = (cmdIndex + 1) % demoCommands.length;
@@ -215,21 +175,24 @@
           }, 120));
         }
       };
+
       step();
       return clearTimers;
     };
 
+    // Position preview near trigger
     const positionPreview = () => {
       if (!terminalPreview) return;
       const rect = terminalTrigger.getBoundingClientRect();
       const px = rect.left + (rect.width / 2) - (terminalPreview.offsetWidth / 2);
       const py = rect.bottom + 12;
-      terminalPreview.style.left = Math.max(12, Math.min(px, window.innerWidth - terminalPreview.offsetWidth - 12)) + 'px';
-      terminalPreview.style.top = Math.min(py, window.innerHeight - terminalPreview.offsetHeight - 12) + 'px';
+      terminalPreview.style.left = Math.max(12, Math.min(px, window.innerWidth - terminalPreview.offsetWidth)) + 'px';
+      terminalPreview.style.top = Math.min(py, window.innerHeight - terminalPreview.offsetHeight) + 'px';
     };
 
+    // Terminal trigger hover (preview)
     terminalTrigger.addEventListener('mouseenter', () => {
-      show(terminalPreview);
+      terminalPreview.style.display = 'block';
       terminalPreview.setAttribute('aria-hidden', 'false');
       positionPreview();
       if (previewStopper) previewStopper();
@@ -237,64 +200,79 @@
     });
 
     terminalTrigger.addEventListener('mouseleave', () => {
-      hide(terminalPreview);
+      terminalPreview.style.display = 'none';
       terminalPreview.setAttribute('aria-hidden', 'true');
       previewLines.textContent = '';
       if (previewStopper) previewStopper();
       previewStopper = null;
     });
 
+    // Reposition on scroll/resize
     window.addEventListener('scroll', () => {
-      if (terminalPreview.style.display !== 'none') positionPreview();
+      if (terminalPreview.style.display === 'block') positionPreview();
     }, { passive: true });
 
     window.addEventListener('resize', () => {
-      if (terminalPreview.style.display !== 'none') positionPreview();
+      if (terminalPreview.style.display === 'block') positionPreview();
     }, { passive: true });
 
+    // Terminal modal (click to open)
     const openModal = () => {
-      show(terminalModal);
+      terminalModal.style.display = 'flex';
       terminalModal.setAttribute('aria-hidden', 'false');
       terminalTrigger.setAttribute('aria-expanded', 'true');
       modalLines.textContent = '';
       if (modalStopper) modalStopper();
       modalStopper = startTyping(modalLines, 18, 850);
       if (terminalBody) terminalBody.focus();
-      document.body.style.overflow = 'hidden';
     };
 
     const closeModal = () => {
-      hide(terminalModal);
+      terminalModal.style.display = 'none';
       terminalModal.setAttribute('aria-hidden', 'true');
       terminalTrigger.setAttribute('aria-expanded', 'false');
       modalLines.textContent = '';
       if (modalStopper) modalStopper();
       modalStopper = null;
-      document.body.style.overflow = '';
     };
 
+    // Modal triggers
     terminalTrigger.addEventListener('click', openModal);
     terminalTrigger.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(); }
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openModal();
+      }
     });
 
     terminalClose.addEventListener('click', closeModal);
-    terminalClose.addEventListener('keydown', (e) => { if (e.key === 'Enter') closeModal(); });
+    terminalClose.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') closeModal();
+    });
 
-    terminalClear?.addEventListener('click', () => { modalLines.textContent = ''; });
+    // Terminal actions
+    terminalClear?.addEventListener('click', () => {
+      modalLines.textContent = '';
+    });
 
     terminalCopy?.addEventListener('click', () => {
       const txt = modalLines.textContent || '';
       if (!txt) return;
+
+      // Modern Clipboard API
       if (navigator.clipboard) {
-        navigator.clipboard.writeText(txt).then(() => {
-          showToast('✓ Copied to clipboard!');
-          terminalCopy.textContent = '✓ Copied';
-          setTimeout(() => { terminalCopy.textContent = 'Copy Log'; }, 1500);
-        }).catch(() => fallbackCopy());
+        navigator.clipboard.writeText(txt)
+          .then(() => {
+            terminalCopy.textContent = '✓ Copied';
+            setTimeout(() => {
+              terminalCopy.textContent = 'Copy Log';
+            }, 1500);
+          })
+          .catch(() => fallbackCopy());
       } else {
         fallbackCopy();
       }
+
       function fallbackCopy() {
         const ta = document.createElement('textarea');
         ta.value = txt;
@@ -304,9 +282,10 @@
         ta.select();
         try {
           document.execCommand('copy');
-          showToast('✓ Copied to clipboard!');
           terminalCopy.textContent = '✓ Copied';
-          setTimeout(() => { terminalCopy.textContent = 'Copy Log'; }, 1500);
+          setTimeout(() => {
+            terminalCopy.textContent = 'Copy Log';
+          }, 1500);
         } catch (e) {
           console.error('Copy failed:', e);
         } finally {
@@ -315,8 +294,19 @@
       }
     });
 
-    terminalModal.addEventListener('click', (e) => { if (e.target === terminalModal) closeModal(); });
-    window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && terminalModal.style.display !== 'none') closeModal(); });
+    // Close modal on outside click
+    terminalModal.addEventListener('click', (e) => {
+      if (e.target === terminalModal) closeModal();
+    });
+
+    // Close on Escape key
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && terminalModal.style.display === 'flex') {
+        closeModal();
+      }
+    });
+
+    // Initial positioning
     window.addEventListener('load', positionPreview, { once: true });
   }
 })();
