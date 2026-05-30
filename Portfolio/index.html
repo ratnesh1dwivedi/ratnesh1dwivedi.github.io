@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.3.0/xterm.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.3.0/xterm.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.3.0/addon-fit.min.js" onerror="window.FitAddon=null"></script>
+<script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.10.0/lib/addon-fit.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
 <style>
@@ -153,7 +153,7 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
 #gp{background:var(--bg)}
 #gp.on{display:flex;flex-direction:column}
 #gcanvas-wrap{position:relative;flex:1;min-height:0;overflow:hidden}
-#globe3{width:100%;height:calc(100vh - 58px - 160px);display:block;cursor:grab}
+#globe3{width:100%;height:calc(100vh - 58px - 140px);display:block;cursor:grab}
 #globe3:active{cursor:grabbing}
 
 /* Globe HUD */
@@ -203,9 +203,11 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
 .gnpb{flex:1;overflow-y:auto;padding:8px}
 .ni{padding:9px;margin-bottom:6px;border-radius:4px;
   background:rgba(0,0,0,0.38);border-left:2px solid var(--red);
-  transition:all .18s;cursor:pointer;pointer-events:all}
-.ni:hover{background:rgba(0,0,0,0.6);border-left-color:var(--gold)}
+  transition:all .18s;cursor:pointer;pointer-events:all;text-decoration:none;display:block}
+.ni:hover{background:rgba(0,0,0,0.65);border-left-color:var(--gold);transform:translateX(2px);
+  box-shadow:0 0 10px rgba(212,175,55,0.08)}
 .ni.w{border-left-color:var(--orange)}.ni.i{border-left-color:var(--blue)}
+.ni .nt{transition:color .15s}.ni:hover .nt{color:var(--gold)}
 .nt{font-family:var(--mono);font-size:.58rem;color:#c8d8c8;line-height:1.38;margin-bottom:3px}
 .nm{font-family:var(--mono);font-size:.5rem;color:var(--text3)}
 
@@ -222,7 +224,7 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
 @keyframes tkani{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
 
 /* Dashboard row below globe */
-.drow{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(0,255,136,0.04);height:160px}
+.drow{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(0,255,136,0.04);height:140px}
 .dp{background:rgba(4,6,10,0.99);padding:12px;position:relative;overflow:hidden}
 .dp::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent,var(--green),transparent);opacity:.28}
@@ -260,6 +262,7 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
    TERMINAL — MULTI-PLATFORM
 ════════════════════════════ */
 #tp.on{display:flex;flex-direction:column;height:calc(100vh - 58px)}
+#tp #xtc{flex:1;min-height:0;overflow:hidden}
 
 /* Terminal chrome bar */
 .tbar{
@@ -354,7 +357,9 @@ body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
   font-family:var(--mono);font-size:.58rem;color:var(--blue);letter-spacing:1.5px}
 #lpb{padding:8px;display:flex;flex-direction:column;gap:5px;max-height:200px;overflow-y:auto}
 .lr{padding:7px;background:rgba(0,0,0,0.4);border-left:2px solid var(--blue);
-  border-radius:0 3px 3px 0;font-family:var(--mono);font-size:.56rem}
+  border-radius:0 3px 3px 0;font-family:var(--mono);font-size:.56rem;
+  cursor:pointer;transition:all .18s;text-decoration:none;display:block}
+.lr:hover{background:rgba(0,174,239,0.08);border-left-color:var(--gold);transform:translateX(2px)}
 .lr-name{color:var(--blue);margin-bottom:2px}
 .lr-det{color:var(--text3)}
 .lr-cd{color:var(--gold);font-size:.54rem;margin-top:2px}
@@ -724,14 +729,14 @@ function initGlobe(){
   const wrap=document.getElementById('gcanvas-wrap');
   const canvas=document.getElementById('globe3');
   const W=wrap.clientWidth||innerWidth;
-  const H=canvas.clientHeight||(innerHeight-58-160);
+  const H=canvas.clientHeight||(innerHeight-58-140);
   const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio,2));
   renderer.setSize(W,H);
   renderer.shadowMap.enabled=false;
   const scene=new THREE.Scene();
   const camera=new THREE.PerspectiveCamera(42,W/H,0.1,1000);
-  camera.position.z=3.2;
+  camera.position.z=2.5;
 
   /* ── Globe sphere with dark shader + grid ── */
   const geo=new THREE.SphereGeometry(1,80,80);
@@ -778,17 +783,20 @@ function initGlobe(){
   const countryGroup = new THREE.Group();
   scene.add(countryGroup);
 
-  function addCountryLines(features){
+  function addCountryLines(features,src){
+    const isIndia=src==='india';
     features.forEach(feat=>{
-      const geom = feat.geometry;
-      const type = geom.type;
-      const coords = type==='Polygon'?[geom.coordinates]:geom.coordinates;
+      if(!feat.geometry)return;
+      const geom=feat.geometry;
+      const coords=geom.type==='Polygon'?[geom.coordinates]:geom.coordinates;
       coords.forEach(poly=>{
         poly.forEach(ring=>{
           const pts=[];
           for(let i=0;i<ring.length;i++){
-            const lon=ring[i][0], lat=ring[i][1];
-            const phi=(90-lat)*Math.PI/180, theta=(lon+180)*Math.PI/180;
+            const c=ring[i];if(!c)return;
+            const lon=c[0],lat=c[1];
+            if(isNaN(lon)||isNaN(lat))return;
+            const phi=(90-lat)*Math.PI/180,theta=(lon+180)*Math.PI/180;
             pts.push(new THREE.Vector3(
               -1.003*Math.sin(phi)*Math.cos(theta),
                1.003*Math.cos(phi),
@@ -798,7 +806,9 @@ function initGlobe(){
           if(pts.length>1){
             const g=new THREE.BufferGeometry().setFromPoints(pts);
             const line=new THREE.Line(g,new THREE.LineBasicMaterial({
-              color:0x1a4a2a,transparent:true,opacity:.55
+              color:isIndia?0x00ff88:0x1a5a30,
+              transparent:true,
+              opacity:isIndia?.95:.5
             }));
             countryGroup.add(line);
           }
@@ -807,19 +817,71 @@ function initGlobe(){
     });
   }
 
-  // Fetch lightweight world borders (~400KB, natural earth)
-  fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson')
-    .then(r=>r.json())
-    .then(data=>{ addCountryLines(data.features); })
+  // Fetch world borders — Natural Earth 110m
+  function loadWorldBorders(){
+    return fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+      .then(r=>r.json())
+      .then(topo=>{
+        if(window.topojson){
+          const feat=topojson.feature(topo,topo.objects.countries);
+          addCountryLines(feat.features,'world');
+        }
+      });
+  }
+
+  // High-res India boundary from Survey of India / Datameet GeoJSON (via CDN)
+  function loadIndiaBorder(){
+    return fetch('https://raw.githubusercontent.com/datameet/maps/master/Country/india-composite.geojson')
+      .then(r=>r.json())
+      .then(data=>{
+        // Draw India border bright green (distinct)
+        const feat=data.features||[data];
+        feat.forEach(f=>{
+          const geom=f.geometry;
+          const parts=geom.type==='Polygon'?[geom.coordinates]:geom.coordinates;
+          parts.forEach(poly=>poly.forEach(ring=>{
+            const pts=[];
+            for(let i=0;i<ring.length;i++){
+              const lon=ring[i][0],lat=ring[i][1];
+              const phi=(90-lat)*Math.PI/180,theta=(lon+180)*Math.PI/180;
+              pts.push(new THREE.Vector3(
+                -1.004*Math.sin(phi)*Math.cos(theta),
+                 1.004*Math.cos(phi),
+                 1.004*Math.sin(phi)*Math.sin(theta)
+              ));
+            }
+            if(pts.length>1){
+              const g=new THREE.BufferGeometry().setFromPoints(pts);
+              const line=new THREE.Line(g,new THREE.LineBasicMaterial({
+                color:0x00ff88,transparent:true,opacity:.9
+              }));
+              countryGroup.add(line);
+            }
+          }));
+        });
+      });
+  }
+
+  // Load world first, then overlay high-res India
+  loadWorldBorders()
     .catch(()=>{
-      // Fallback: fetch from another CDN
-      fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
-        .then(r=>r.json())
-        .then(topo=>{
-          // topojson decode inline (simplified)
-          if(window.topojson){ addCountryLines(topojson.feature(topo,topo.objects.countries).features); }
-        }).catch(()=>{});
+      fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson')
+        .then(r=>r.json()).then(data=>addCountryLines(data.features,'world')).catch(()=>{});
     });
+
+  // India high-res overlay
+  loadIndiaBorder().catch(()=>{
+    // fallback: just highlight India from world atlas with brighter color
+    fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json')
+      .then(r=>r.json()).then(topo=>{
+        if(window.topojson){
+          const feat=topojson.feature(topo,topo.objects.countries);
+          // India = id 356
+          const india=feat.features.filter(f=>f.id==='356'||f.id===356);
+          addCountryLines(india,'india');
+        }
+      }).catch(()=>{});
+  });
 
   /* Stars */
   const sg=new THREE.BufferGeometry();
@@ -841,23 +903,29 @@ function initGlobe(){
 
   /* ── Rotation ── */
   const euler=new THREE.Euler(.15,.5,0,'YXZ');
-  let drag=false,lm={x:0,y:0},vel={x:0,y:.003};
+  let drag=false,lm={x:0,y:0},vel={x:0,y:.0015};
   canvas.addEventListener('mousedown',e=>{drag=true;lm={x:e.clientX,y:e.clientY};vel={x:0,y:0}});
   addEventListener('mousemove',e=>{
     if(!drag)return;
     const dx=e.clientX-lm.x,dy=e.clientY-lm.y;
-    euler.y+=dx*.004;euler.x+=dy*.004;euler.x=Math.max(-1,Math.min(1,euler.x));
-    vel={x:dy*.002,y:dx*.002};lm={x:e.clientX,y:e.clientY};
+    euler.y+=dx*.007;euler.x+=dy*.006;euler.x=Math.max(-1.2,Math.min(1.2,euler.x));
+    vel={x:dy*.003,y:dx*.003};lm={x:e.clientX,y:e.clientY};
   });
   addEventListener('mouseup',()=>drag=false);
   canvas.addEventListener('touchstart',e=>{drag=true;lm={x:e.touches[0].clientX,y:e.touches[0].clientY};vel={x:0,y:0}},{passive:true});
   addEventListener('touchmove',e=>{
     if(!drag)return;
     const dx=e.touches[0].clientX-lm.x,dy=e.touches[0].clientY-lm.y;
-    euler.y+=dx*.004;euler.x+=dy*.004;euler.x=Math.max(-1,Math.min(1,euler.x));
+    euler.y+=dx*.008;euler.x+=dy*.007;euler.x=Math.max(-1.2,Math.min(1.2,euler.x));
     lm={x:e.touches[0].clientX,y:e.touches[0].clientY};
   },{passive:true});
   addEventListener('touchend',()=>drag=false);
+
+  // Scroll wheel zoom
+  canvas.addEventListener('wheel',e=>{
+    e.preventDefault();
+    camera.position.z=Math.max(1.5,Math.min(5,camera.position.z+e.deltaY*.003));
+  },{passive:false});
 
   /* ── Layer groups ── */
   const layers={attacks:new THREE.Group(),sats:new THREE.Group(),iss:new THREE.Group(),launches:new THREE.Group(),maritime:new THREE.Group(),hq:new THREE.Group()};
@@ -898,22 +966,22 @@ function initGlobe(){
 
   /* ── HQ / LANDMARK NODES ── */
   const hqs=[
-    {lat:40.75,lon:-73.98,name:'United Nations HQ',info:'UN Security Council — New York',icon:'🏛️',col:0xd4af37},
-    {lat:38.9,lon:-77.04,name:'The White House',info:'Executive Office — Washington DC',icon:'🏛️',col:0xd4af37},
-    {lat:38.87,lon:-77.06,name:'Pentagon',info:'US DoD HQ — Arlington VA',icon:'⭐',col:0xff3c3c},
-    {lat:51.5,lon:-.13,name:'MI6 HQ',info:'Secret Intelligence Service — London',icon:'🔍',col:0x00aeef},
-    {lat:55.75,lon:37.58,name:'FSB HQ (Lubyanka)',info:'Federal Security Service — Moscow',icon:'🔍',col:0xff3c3c},
-    {lat:39.91,lon:116.39,name:'PLA Cyber HQ',info:'PLA Strategic Support Force — Beijing',icon:'⭐',col:0xff3c3c},
-    {lat:28.59,lon:77.19,name:'RAW HQ',info:'Research & Analysis Wing — New Delhi',icon:'🔍',col:0xd4af37},
-    {lat:28.6,lon:77.2,name:'South Block',info:'Indian PMO / MoD — New Delhi',icon:'🏛️',col:0xd4af37},
-    {lat:12.97,lon:77.59,name:'ISRO HQ',info:'Indian Space Research Organisation — Bengaluru',icon:'🛰️',col:0x00ff88},
-    {lat:28.62,lon:77.21,name:'DRDO HQ',info:'Defence Research Dev. Org. — New Delhi',icon:'⚙️',col:0x00aeef},
-    {lat:48.87,lon:2.29,name:'INTERPOL Liaison',info:'International Criminal Police — Paris',icon:'🛡️',col:0x00aeef},
-    {lat:50.88,lon:4.71,name:'NATO HQ',info:'North Atlantic Treaty Org. — Brussels',icon:'⭐',col:0x00aeef},
-    {lat:37.68,lon:-122.47,name:'NSA West',info:'National Security Agency Field — CA',icon:'👁️',col:0xff8c00},
-    {lat:38.95,lon:-77.15,name:'CIA HQ',info:'Central Intelligence Agency — Langley VA',icon:'👁️',col:0xff8c00},
-    {lat:35.7,lon:139.75,name:'NPA Cyber Div.',info:'National Police Agency — Tokyo',icon:'🔍',col:0x00aeef},
-    {lat:51.49,lon:-.18,name:'GCHQ London',info:'Govt. Communications HQ relay — London',icon:'📡',col:0x00aeef},
+    {lat:40.75,lon:-73.98,name:'United Nations HQ',info:'UN Security Council — New York',icon:'🏛️',col:0xd4af37,url:'https://www.un.org/en/'},
+    {lat:38.9,lon:-77.04,name:'The White House',info:'Executive Office — Washington DC',icon:'🏛️',col:0xd4af37,url:'https://www.whitehouse.gov/'},
+    {lat:38.87,lon:-77.06,name:'Pentagon',info:'US DoD HQ — Arlington VA',icon:'⭐',col:0xff3c3c,url:'https://www.defense.gov/'},
+    {lat:51.5,lon:-.13,name:'MI6 HQ',info:'Secret Intelligence Service — London',icon:'🔍',col:0x00aeef,url:'https://www.sis.gov.uk/'},
+    {lat:55.75,lon:37.58,name:'FSB HQ (Lubyanka)',info:'Federal Security Service — Moscow',icon:'🔍',col:0xff3c3c,url:'https://en.wikipedia.org/wiki/Federal_Security_Service'},
+    {lat:39.91,lon:116.39,name:'PLA Cyber HQ',info:'PLA Strategic Support Force — Beijing',icon:'⭐',col:0xff3c3c,url:'https://en.wikipedia.org/wiki/PLA_Strategic_Support_Force'},
+    {lat:28.59,lon:77.19,name:'RAW HQ',info:'Research & Analysis Wing — New Delhi',icon:'🔍',col:0xd4af37,url:'https://en.wikipedia.org/wiki/Research_and_Analysis_Wing'},
+    {lat:28.6,lon:77.2,name:'South Block',info:'Indian PMO / MoD — New Delhi',icon:'🏛️',col:0xd4af37,url:'https://www.pmindia.gov.in/'},
+    {lat:12.97,lon:77.59,name:'ISRO HQ',info:'Indian Space Research Organisation — Bengaluru',icon:'🛰️',col:0x00ff88,url:'https://www.isro.gov.in/'},
+    {lat:28.62,lon:77.21,name:'DRDO HQ',info:'Defence Research Dev. Org. — New Delhi',icon:'⚙️',col:0x00aeef,url:'https://www.drdo.gov.in/'},
+    {lat:48.87,lon:2.29,name:'INTERPOL Liaison',info:'International Criminal Police — Paris',icon:'🛡️',col:0x00aeef,url:'https://www.interpol.int/'},
+    {lat:50.88,lon:4.71,name:'NATO HQ',info:'North Atlantic Treaty Org. — Brussels',icon:'⭐',col:0x00aeef,url:'https://www.nato.int/'},
+    {lat:37.68,lon:-122.47,name:'NSA West',info:'National Security Agency Field — CA',icon:'👁️',col:0xff8c00,url:'https://www.nsa.gov/'},
+    {lat:38.95,lon:-77.15,name:'CIA HQ',info:'Central Intelligence Agency — Langley VA',icon:'👁️',col:0xff8c00,url:'https://www.cia.gov/'},
+    {lat:35.7,lon:139.75,name:'NPA Cyber Div.',info:'National Police Agency — Tokyo',icon:'🔍',col:0x00aeef,url:'https://www.npa.go.jp/english/'},
+    {lat:51.49,lon:-.18,name:'GCHQ London',info:'Govt. Communications HQ relay — London',icon:'📡',col:0x00aeef,url:'https://www.gchq.gov.uk/'},
   ];
   const hqMeshes=[];
   hqs.forEach(hq=>{
@@ -1065,6 +1133,7 @@ function initGlobe(){
   const tt=document.getElementById('gtt'),tttl=document.getElementById('gtt-title'),ttbd=document.getElementById('gtt-body'),ttsub=document.getElementById('gtt-sub');
   const raycaster=new THREE.Raycaster();raycaster.params.Points={threshold:.02};
   const allObjs=[...hqMeshes,...vesselMeshes,issGeom,...satObjs.map(s=>s.mesh),...layers.launches.children.filter(c=>c.type==='Mesh')];
+  let hoveredObj=null;
   function onMouseMove(e){
     const rect=canvas.getBoundingClientRect();
     const mx=((e.clientX-rect.left)/rect.width)*2-1;
@@ -1073,15 +1142,31 @@ function initGlobe(){
     const hits=raycaster.intersectObjects(allObjs);
     if(hits.length&&hits[0].object.userData.name){
       const d=hits[0].object.userData;
+      hoveredObj=d;
       tttl.textContent=(d.icon||'')+(d.name||d.type||'');
       ttbd.textContent=d.info||d.type||'';
-      ttsub.textContent=d.alt?`ALT: ${d.alt}`:(d.type==='vessel'?`TYPE: ${(d.type||'').toUpperCase()}`:d.country||'');
+      const sub=d.alt?`ALT: ${d.alt} km`:(d.type==='vessel'?`⚓ ${(d.type||'').toUpperCase()}`:d.country?`🌍 ${d.country}`:'');
+      ttsub.textContent=sub;
+      const linkEl=document.getElementById('gtt-link');
+      if(linkEl)linkEl.style.display=d.url?'block':'none';
+      canvas.style.cursor=d.url?'pointer':'crosshair';
       tt.style.display='block';
-      tt.style.left=(e.clientX-rect.left+14)+'px';
-      tt.style.top=(e.clientY-rect.top+14)+'px';
-    } else { tt.style.display='none'; }
+      // Keep tooltip inside viewport
+      const tx=Math.min(e.clientX-rect.left+14,rect.width-230);
+      const ty=Math.min(e.clientY-rect.top+14,rect.height-120);
+      tt.style.left=tx+'px';tt.style.top=ty+'px';
+    } else {
+      hoveredObj=null;tt.style.display='none';
+      canvas.style.cursor=drag?'grabbing':'grab';
+    }
   }
   canvas.addEventListener('mousemove',onMouseMove);
+
+  // Click handler — open URL if hovered object has one
+  canvas.addEventListener('click',e=>{
+    if(drag)return; // don't fire on drag release
+    if(hoveredObj?.url) window.open(hoveredObj.url,'_blank','noopener');
+  });
 
   /* ── HUD updates ── */
   setInterval(()=>{
@@ -1242,8 +1327,18 @@ function fetchLaunches(){
     })
     .catch(()=>{
       panel.innerHTML='';
-      staticLaunches.forEach(item=>{
-        panel.innerHTML+=`<div class="lr"><div class="lr-name">🚀 ${item.name}</div><div class="lr-det">${item.provider} · ${item.site}</div><div class="lr-cd">${item.date}</div></div>`;
+      // Static launch entries with search links
+      const launchSearch=[
+        {name:'PSLV-C59 / EarthCARE',url:'https://www.isro.gov.in/'},
+        {name:'Falcon 9 / Starlink G10',url:'https://www.spacex.com/launches/'},
+        {name:'SLS Artemis IV',url:'https://www.nasa.gov/missions/artemis/'},
+        {name:'GSLV Mk III / OneWeb',url:'https://www.isro.gov.in/'},
+        {name:'Ariane 6 / Galileo',url:'https://www.arianespace.com/'},
+        {name:'Soyuz-2 / Progress',url:'https://www.roscosmos.ru/'},
+      ];
+      staticLaunches.forEach((item,i)=>{
+        const url=launchSearch[i]?.url||'https://www.rocketlaunch.live/';
+        panel.innerHTML+=`<a class="lr" href="${url}" target="_blank" rel="noopener noreferrer"><div class="lr-name">🚀 ${item.name}</div><div class="lr-det">${item.provider} · ${item.site}</div><div class="lr-cd">${item.date}</div></a>`;
       });
       document.getElementById('gnl').textContent='PSLV-C59';
     });
@@ -1408,9 +1503,65 @@ function getCountdown(iso){
 })();
 
 /* ── 6. SINGLE XTERM.JS TERMINAL ── */
+/* ── FALLBACK TERMINAL (if xterm.js CDN fails) ── */
+function buildFallbackTerm(container){
+  container.style.cssText='background:#010301;color:#00ff88;font-family:"Share Tech Mono","Courier New",monospace;font-size:13px;padding:12px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;height:100%';
+  const out=document.createElement('div');
+  out.style.cssText='flex:1;overflow-y:auto;white-space:pre-wrap;word-break:break-all';
+  const inp=document.createElement('div');
+  inp.style.cssText='display:flex;align-items:center;gap:6px;border-top:1px solid rgba(0,255,136,.1);padding-top:8px;flex-shrink:0';
+  const ps=document.createElement('span');
+  ps.style.color='#d4af37';ps.textContent='ratnesh@cybergsec:~$ ';
+  const input=document.createElement('input');
+  input.style.cssText='flex:1;background:transparent;border:none;outline:none;color:#00ff88;font-family:inherit;font-size:inherit;caret-color:#00ff88';
+  inp.appendChild(ps);inp.appendChild(input);
+  container.appendChild(out);container.appendChild(inp);
+  const hist=[];let hi=-1;
+  function print(text,col){
+    const line=document.createElement('div');
+    line.style.color=col||'#00ff88';line.textContent=text;
+    out.appendChild(line);out.scrollTop=out.scrollHeight;
+  }
+  print('  CYBERGSEC TERMINAL — Fallback Mode (xterm.js unavailable)','#d4af37');
+  print('  Type help for commands.','#556655');
+  print('');
+  input.addEventListener('keydown',async e=>{
+    if(e.key==='Enter'){
+      const cmd=input.value.trim().toLowerCase();
+      print('ratnesh@cybergsec:~$ '+input.value,'#556655');
+      if(cmd)hist.unshift(cmd);hi=-1;input.value='';
+      await runFallbackCmd(cmd,print);
+    } else if(e.key==='ArrowUp'){e.preventDefault();if(hi<hist.length-1){hi++;input.value=hist[hi];}}
+    else if(e.key==='ArrowDown'){e.preventDefault();if(hi>0){hi--;input.value=hist[hi];}else{hi=-1;input.value='';}}
+  });
+  input.focus();
+  async function runFallbackCmd(cmd,p){
+    if(!cmd){return;}
+    if(cmd==='clear'){out.innerHTML='';return;}
+    if(cmd==='help'){['whoami','date','ip','iss','weather','launch','cve','news','whois','clear'].forEach(c=>p('  '+c,'#00ff88'));return;}
+    if(cmd==='whoami'){p('  Ratnesh Raj Dwivedi — Cybersecurity Researcher','#00ff88');p('  CEH · CHFI · ISC2-CC · ICTCS-2025','#556655');return;}
+    if(cmd==='date'){p('  '+new Date().toString(),'#d4af37');return;}
+    if(cmd==='ip'){p('  Fetching...','#556655');try{const r=await fetch('https://api.ipify.org?format=json');const d=await r.json();p('  Public IP: '+d.ip,'#00ff88');}catch{p('  Failed','#ff3c3c');}return;}
+    if(cmd==='iss'){p('  Fetching ISS position...','#556655');try{const r=await fetch('https://api.wheretheiss.at/v1/satellites/25544');const d=await r.json();p('  Lat: '+parseFloat(d.latitude).toFixed(4)+'°','#00ff88');p('  Lon: '+parseFloat(d.longitude).toFixed(4)+'°','#00ff88');p('  Alt: '+parseFloat(d.altitude).toFixed(1)+' km','#00aeef');p('  Vel: '+parseFloat(d.velocity).toFixed(1)+' km/h','#00aeef');}catch{p('  ISS API unavailable','#ff3c3c');}return;}
+    if(cmd==='weather'){p('  Fetching weather — Kanpur...','#556655');try{const r=await fetch('https://wttr.in/Kanpur?format=j1');const d=await r.json();const c=d.current_condition[0];p('  '+c.weatherDesc[0].value+' | '+c.temp_C+'°C | Humidity: '+c.humidity+'%','#00ff88');}catch{p('  Weather unavailable','#ff3c3c');}return;}
+    if(cmd==='launch'){p('  Fetching launches...','#556655');try{const r=await fetch('https://fdo.rocketlaunch.live/json/launches/next/3');const d=await r.json();(d.result||[]).slice(0,3).forEach(l=>{const n=l.name||'Unknown';const t=l.t0?new Date(l.t0).toUTCString():'TBD';p('  🚀 '+n,'#00aeef');p('     '+t,'#556655');});}catch{p('  🚀 PSLV-C59 | Falcon 9/Starlink | SLS Artemis IV','#00ff88');}return;}
+    if(cmd==='cve'){p('  Fetching NVD CVEs...','#556655');try{const r=await fetch('https://services.nvd.nist.gov/rest/json/cves/2.0?resultsPerPage=5&startIndex=0');const d=await r.json();(d.vulnerabilities||[]).slice(0,5).forEach(v=>{const id=v.cve.id;const sev=v.cve.metrics?.cvssMetricV31?.[0]?.cvssData?.baseSeverity||'?';p('  ['+sev+'] '+id,'#d4af37');});}catch{p('  NVD unavailable','#ff3c3c');}return;}
+    if(cmd==='news'){p('  Fetching The Hacker News...','#556655');try{const r=await fetch('https://api.allorigins.win/get?url='+encodeURIComponent('https://feeds.feedburner.com/TheHackersNews'));const d=await r.json();const xml=new DOMParser().parseFromString(d.contents,'application/xml');Array.from(xml.querySelectorAll('item')).slice(0,5).forEach(i=>p('  ▸ '+(i.querySelector('title')?.textContent||'').slice(0,72),'#00ff88'));}catch{p('  Feed unavailable','#ff3c3c');}return;}
+    if(cmd==='whois'){p('  Querying RDAP: google.com...','#556655');try{const r=await fetch('https://rdap.org/domain/google.com');const d=await r.json();p('  Domain: '+(d.ldhName||'google.com'),'#00ff88');p('  Status: '+(d.status||[]).slice(0,2).join(', '),'#d4af37');}catch{p('  RDAP unavailable','#ff3c3c');}return;}
+    p('  bash: '+cmd+': command not found','#ff3c3c');p('  Type help for commands','#556655');
+  }
+}
+
 function buildTerm(containerId){
-  if(!window.Terminal)return;
-  const FitAddon=window.FitAddon?.FitAddon;
+  const container=document.getElementById(containerId);
+  if(!container)return;
+  // If xterm failed to load, use fallback div terminal
+  if(!window.Terminal){
+    buildFallbackTerm(container);
+    return;
+  }
+  // FitAddon from jsdelivr exposes as window.FitAddon.FitAddon
+  const FitAddonClass=(window.FitAddon?.FitAddon)||window.FitAddon;
   const term=new Terminal({
     cursorBlink:true,cursorStyle:'bar',
     fontFamily:"'Share Tech Mono','Courier New',monospace",
@@ -1427,7 +1578,13 @@ function buildTerm(containerId){
   });
   const el=document.getElementById(containerId);if(!el)return;
   term.open(el);
-  if(FitAddon){const fa=new FitAddon();term.loadAddon(fa);setTimeout(()=>fa.fit(),100);}
+  let fitAddon=null;
+  if(FitAddonClass){
+    try{fitAddon=new FitAddonClass();term.loadAddon(fitAddon);setTimeout(()=>{try{fitAddon.fit();}catch(e){}},200);}
+    catch(e){fitAddon=null;}
+  }
+  // Re-fit on resize
+  window.addEventListener('resize',()=>{try{if(fitAddon)fitAddon.fit();}catch(e){}});
 
   const U='\x1b[1;32mratnesh\x1b[0m',H='\x1b[1;33mcybergsec\x1b[0m',T='\x1b[1;34m~\x1b[0m';
   const PR=`${U}@${H}:${T}$ `;
