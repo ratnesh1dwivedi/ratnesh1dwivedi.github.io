@@ -22,7 +22,5 @@ Two comprehensive research reports examining the most powerful surveillance syst
 📄 PRISM Full Report → [FVEY-PRISM.pdf](https://ratnesh1dwivedi.github.io/FVEY-PRISM.pdf)
 📄 Pegasus Full Report → [PEGASUS.pdf](https://ratnesh1dwivedi.github.io/PEGASUS.pdf)
 
-✍️ Read excerpts on Substack → Pegasus : https://dwivedi1.substack.com/p/pegasus-the-55-million-spyware-that?r=2airbq
-                               Prism : https://dwivedi1.substack.com/p/the-program-that-watched-the-world?r=2airbq
-📰 Read excerpts on Medium → Pegasus : https://medium.com/@ratneshd202/your-phone-has-already-been-compromised-you-just-dont-know-it-yet-3f25a87e5f84
-                             Prism : https://medium.com/@ratneshd202/the-program-that-watched-the-world-and-what-it-taught-us-about-power-c7c8f9826694
+✍️ Read excerpts on Substack → [PEGASUS](https://dwivedi1.substack.com/p/pegasus-the-55-million-spyware-that?r=2airbq) & [PRISM](https://dwivedi1.substack.com/p/the-program-that-watched-the-world?r=2airbq)
+📰 Read excerpts on Medium → [PEGASUS](https://medium.com/@ratneshd202/your-phone-has-already-been-compromised-you-just-dont-know-it-yet-3f25a87e5f84) & [PRISM](https://medium.com/@ratneshd202/the-program-that-watched-the-world-and-what-it-taught-us-about-power-c7c8f9826694)
